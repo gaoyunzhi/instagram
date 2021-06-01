@@ -53,13 +53,13 @@ def run():
                 with open('tmp_post', 'w') as f:
                     f.write(str(post))
                 album = to_album.get(post)
-                print(album)
                 try:
                     album_sender.send_v2(channel, album)
                 except Exception as e:
                     with open('tmp_failed_post', 'w') as f:
                         f.write(str(post))
                     print('instagram sending fail', url, e)
+                    continue
                 existing.add(url)
         
 if __name__ == '__main__':
