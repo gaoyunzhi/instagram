@@ -45,7 +45,7 @@ def run():
             try:
                 user_feed_info = web_api.user_feed(page, count=10)
             except Exception as e:
-                message = 'instagram fetch failed for %s: %s' % (page, e)
+                message = 'instagram fetch failed for %s %s: %s' % (detail.get('name'), page, e)
                 print(message)
                 debug_group.send_message(message)
                 return
