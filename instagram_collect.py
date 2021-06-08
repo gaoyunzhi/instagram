@@ -42,7 +42,12 @@ def run():
         schedule = list(pages.items())
         random.shuffle(schedule)
         for page, detail in schedule[:1]:
-            user_feed_info = web_api.user_feed(page, count=10)
+            try:
+                user_feed_info = web_api.user_feed(page, count=10)
+            except Exception as e:
+                print('instagram fetch failed', page, str(e))
+                
+
             for post in user_feed_info:
                 post = post['node']
                 url = post['link']
