@@ -45,9 +45,10 @@ def run():
             try:
                 user_feed_info = web_api.user_feed(page, count=10)
             except Exception as e:
-                print('instagram fetch failed', page, str(e))
-                
-
+                message = 'instagram fetch failed for %s: %s' % (page, e)
+                print(message)
+                debug_group.send_message(message)
+                return
             for post in user_feed_info:
                 post = post['node']
                 url = post['link']
