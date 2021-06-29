@@ -34,9 +34,19 @@ existing = plain_db.loadKeyOnlyDB('existing')
 tele = Updater(credential['bot_token'], use_context=True)
 debug_group = tele.bot.get_chat(credential['debug_group'])
 
+def getSchedule():
+    schedules = []
+    for channel_id, pages in setting.items():
+        for page, detail in pages.items():
+            schedules.append((fetchtime.get(page, 0), channel_id, page, detail))
+    schedules.sort()
+    _, channel_id, page, detail = schedules[0]
+    fetchtime.update(page, int(time.time()))
+    return tele.bot.get_chat(channel_id), page, detail
+
 @log_on_fail(debug_group)
 def run():
-    sent = False
+    channel, page, detail = getSchedule()
     for channel_id, pages in setting.items():
         channel = tele.bot.get_chat(channel_id)
         schedule = list(pages.items())
