@@ -15,6 +15,8 @@ import hashlib
 import string
 from instagram_web_api import Client, ClientCompatPatch, ClientError, ClientLoginError
 
+fetchtime = plain_db.load('fetchtime')
+
 class MyClient(Client):
     @staticmethod
     def _extract_rhx_gis(html):
@@ -47,36 +49,29 @@ def getSchedule():
 @log_on_fail(debug_group)
 def run():
     channel, page, detail = getSchedule()
-    for channel_id, pages in setting.items():
-        channel = tele.bot.get_chat(channel_id)
-        schedule = list(pages.items())
-        random.shuffle(schedule)
-        for page, detail in schedule[:1]:
-            try:
-                user_feed_info = web_api.user_feed(page, count=10)
-            except Exception as e:
-                message = 'instagram fetch failed for %s %s: %s' % (detail.get('name'), page, e)
-                print(message)
-                debug_group.send_message(message)
-                return
-            for post in user_feed_info:
-                post = post['node']
-                url = post['link']
-                if existing.contain(url):
-                    continue
-                if post['likes']['count'] < detail.get('likes', 100):
-                    continue
-                with open('tmp_post', 'w') as f:
-                    f.write(str(post))
-                album = to_album.get(post)
-                try:
-                    album_sender.send_v2(channel, album)
-                except Exception as e:
-                    with open('tmp_failed_post', 'w') as f:
-                        f.write(str(post))
-                    print('instagram sending fail', url, e)
-                    continue
-                existing.add(url)
+    try:
+        user_feed_info = web_api.user_feed(page, count=10)
+    except Exception as e:
+        print('instagram fetch failed for %s %s: %s' % (detail.get('name'), page, e))
+        return
+    for post in user_feed_info:
+        post = post['node']
+        url = post['link']
+        if existing.contain(url):
+            continue
+        if post['likes']['count'] < detail.get('likes', 100):
+            continue
+        with open('tmp_post', 'w') as f:
+            f.write(str(post))
+        album = to_album.get(post)
+        try:
+            album_sender.send_v2(channel, album)
+        except Exception as e:
+            with open('tmp_failed_post', 'w') as f:
+                f.write(str(post))
+            print('instagram sending fail', url, e)
+            continue
+        existing.add(url)
         
 if __name__ == '__main__':
     run()
