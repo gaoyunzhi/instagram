@@ -16,6 +16,7 @@ import string
 from instagram_web_api import Client, ClientCompatPatch, ClientError, ClientLoginError
 
 fetchtime = plain_db.load('fetchtime')
+referer = plain_db.loadKeyOnlyDB('referer')
 
 class MyClient(Client):
     @staticmethod
@@ -46,6 +47,20 @@ def getSchedule():
     fetchtime.update(page, int(time.time()))
     return tele.bot.get_chat(channel_id), page, detail
 
+def refer(item):
+    if not referer.add(item):
+        return
+    debug_group.send_message('Suggest: https://www.instagram.com/' + item)
+
+@log_on_fail(debug_group)
+def getReferer(text):
+    if not text:
+        return
+    for item in text.split():
+        if item.startswith('@'):
+            refer_item = item[1:]
+            refer(refer_item)
+
 @log_on_fail(debug_group)
 def run():
     channel, page, detail = getSchedule()
@@ -59,6 +74,7 @@ def run():
         url = post['link']
         if existing.contain(url):
             continue
+        getReferer(post['caption']['text'])
         if post['likes']['count'] < detail.get('likes', 100):
             continue
         with open('tmp_post', 'w') as f:
