@@ -74,7 +74,7 @@ def run():
         url = post['link']
         if existing.contain(url):
             continue
-        getReferer(post['caption'].get('text', ''))
+        getReferer(post.get('caption', {}).get('text', ''))
         if post['likes']['count'] < detail.get('likes', 100):
             continue
         with open('tmp_post', 'w') as f:
