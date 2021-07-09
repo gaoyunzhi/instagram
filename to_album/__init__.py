@@ -12,7 +12,7 @@ def getImgs(content):
 def get(content):
     result = Result()
     result.url = content['link']
-    result.cap_html_v2 = content['caption']['text']
+    result.cap_html_v2 = (content.get('caption') or {}).get('text') or ''
     if 'edge_sidecar_to_children' in content:
         result.imgs = list(getImgs(content['edge_sidecar_to_children']))
     else:
