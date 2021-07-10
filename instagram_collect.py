@@ -77,6 +77,9 @@ def run():
         getReferer((post.get('caption') or {}).get('text', ''))
         if post['likes']['count'] < detail.get('likes', 100):
             continue
+        if post['is_video']:
+            with open('tmp_video_post', 'w') as f:
+                f.write(str(post))
         with open('tmp_post', 'w') as f:
             f.write(str(post))
         album = to_album.get(post)
