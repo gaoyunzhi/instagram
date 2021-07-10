@@ -3,7 +3,7 @@ import time
 
 def test():
 	count = 0
-	target = list(range(0, 20))
+	target = list(range(20, 40))
 	with open('candidates.txt') as f:
 		for line in f:
 			count += 1
