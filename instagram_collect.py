@@ -29,8 +29,13 @@ class MyClient(Client):
         text = ''.join([random.choice(options) for _ in range(8)])
         return hashlib.md5(text.encode())
 
-def writeSettings(user, pwd, settings_file):
-    web_api = MyClient(username=user, password=pwd, auto_patch=True, drop_incompat_keys=False)
+# TODO: if I log in, I will need to compute instagram link myself
+# https://medium.com/stirtingale/how-to-convert-an-instagram-id-to-a-url-in-php-cbe77ed7aa00
+# let's see if skip login could fix this, test after 11:00am Jul 11
+
+def writeSettings(settings_file):
+    web_api = MyClient(auto_patch=True, drop_incompat_keys=False)
+    # web_api = MyClient(username=credential["user"], password=credential["pwd"], auto_patch=True, drop_incompat_keys=False)
     result = dict(web_api.settings)
     del result['rhx_gis']
     print(result)
@@ -40,10 +45,11 @@ def readSettings(settings_file):
     return pickle.load(open(settings_file,"rb"))
 
 if not os.path.exists("settingObj"):
-    writeSettings(credential["user"], credential["pwd"], "settingObj")
+    writeSettings("settingObj")
 
 cache_settings = readSettings("settingObj")
-web_api = MyClient(username=credential["user"], password=credential["pwd"], settings=cache_settings)
+web_api = MyClient(settings=cache_settings)
+# web_api = MyClient(username=credential["user"], password=credential["pwd"], settings=cache_settings)
 
 with open('db/setting') as f:
     setting = yaml.load(f, Loader=yaml.FullLoader)
