@@ -85,7 +85,12 @@ def run():
         print('instagram fetch failed for %s %s: %s' % (detail.get('name'), page, e))
         return
     for post in user_feed_info:
+        print(post)
         post = post['node']
+        if 'link' not in post:
+            print('no link')
+            continue
+        print('has link')
         url = post['link']
         if existing.contain(url):
             continue
