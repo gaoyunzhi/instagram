@@ -13,10 +13,14 @@ import to_album
 import random
 import hashlib
 import string
+import pickle
+import os
 from instagram_web_api import Client, ClientCompatPatch, ClientError, ClientLoginError
 
 fetchtime = plain_db.load('fetchtime')
 referer = plain_db.loadKeyOnlyDB('referer')
+with open('credential') as f:
+    credential = yaml.load(f, Loader=yaml.FullLoader)
 
 class MyClient(Client):
     @staticmethod
@@ -25,10 +29,21 @@ class MyClient(Client):
         text = ''.join([random.choice(options) for _ in range(8)])
         return hashlib.md5(text.encode())
 
-web_api = MyClient(auto_patch=True, drop_incompat_keys=False)
+def writeSettings(user, pwd, settings_file):
+    web_api = MyClient(username=user, password=pwd, auto_patch=True, drop_incompat_keys=False)
+    result = dict(web_api.settings)
+    del result['rhx_gis']
+    print(result)
+    pickle.dump(result, open(settings_file,"wb"))
 
-with open('credential') as f:
-    credential = yaml.load(f, Loader=yaml.FullLoader)
+def readSettings(settings_file):
+    return pickle.load(open(settings_file,"rb"))
+
+if not os.path.exists("settingObj"):
+    writeSettings(credential["user"], credential["pwd"], "settingObj")
+
+cache_settings = readSettings("settingObj")
+web_api = MyClient(username=credential["user"], password=credential["pwd"], settings=cache_settings)
 
 with open('db/setting') as f:
     setting = yaml.load(f, Loader=yaml.FullLoader)
@@ -65,7 +80,7 @@ def getReferer(text):
 def run():
     channel, page, detail = getSchedule()
     try:
-        user_feed_info = web_api.user_feed(page, count=10)
+        user_feed_info = web_api.user_feed(str(page), count=10)
     except Exception as e:
         print('instagram fetch failed for %s %s: %s' % (detail.get('name'), page, e))
         return
