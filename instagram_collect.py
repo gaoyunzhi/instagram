@@ -79,7 +79,7 @@ def getReferer(text):
         return
     for item in text.split():
         if item.startswith('@'):
-            refer_item = item[1:].strip(',')
+            refer_item = item[1:].strip(',').strip().strip('.').strip(',')
             refer(refer_item)
 
 @log_on_fail(debug_group)
@@ -99,9 +99,10 @@ def run():
             f.write(str(post))
         post = post['node']
         url = post['link']
+        if not detail.get('no_refer'):
+            getReferer((post.get('caption') or {}).get('text', ''))
         if existing.contain(url):
             continue
-        getReferer((post.get('caption') or {}).get('text', ''))
         if post['likes']['count'] < detail.get('likes', 100):
             continue
         if post['is_video']:
