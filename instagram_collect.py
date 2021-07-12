@@ -79,7 +79,7 @@ def getReferer(text):
         return
     for item in text.split():
         if item.startswith('@'):
-            refer_item = item[1:].strip(',').strip().strip('.').strip(',')
+            refer_item = item[1:].strip(',').strip('.')
             refer(refer_item)
 
 @log_on_fail(debug_group)
