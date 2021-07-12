@@ -34,8 +34,8 @@ class MyClient(Client):
 # let's see if skip login could fix this, test after 11:00am Jul 11
 
 def writeSettings(settings_file):
-    web_api = MyClient(auto_patch=True, drop_incompat_keys=False)
-    # web_api = MyClient(username=credential["user"], password=credential["pwd"], auto_patch=True, drop_incompat_keys=False)
+    # web_api = MyClient(auto_patch=True, drop_incompat_keys=False)
+    web_api = MyClient(username=credential["user"], password=credential["pwd"], auto_patch=True, drop_incompat_keys=False)
     result = dict(web_api.settings)
     del result['rhx_gis']
     print(result)
@@ -48,8 +48,9 @@ if not os.path.exists("settingObj"):
     writeSettings("settingObj")
 
 cache_settings = readSettings("settingObj")
-web_api = MyClient(settings=cache_settings)
-# web_api = MyClient(username=credential["user"], password=credential["pwd"], settings=cache_settings)
+# web_api = MyClient(settings=cache_settings, auto_patch=True, drop_incompat_keys=False)
+web_api = MyClient(username=credential["user"], password=credential["pwd"], 
+    settings=cache_settings, auto_patch=True, drop_incompat_keys=False)
 
 with open('db/setting') as f:
     setting = yaml.load(f, Loader=yaml.FullLoader)
@@ -90,13 +91,12 @@ def run():
     except Exception as e:
         print('instagram fetch failed for %s %s: %s' % (detail.get('name'), page, e))
         return
+    with open('tmp_user_feed_info', 'w') as f:
+        f.write(str(user_feed_info))
     for post in user_feed_info:
-        print(post)
+        with open('tmp_post', 'w') as f:
+            f.write(str(post))
         post = post['node']
-        if 'link' not in post:
-            print('no link')
-            continue
-        print('has link')
         url = post['link']
         if existing.contain(url):
             continue
@@ -106,8 +106,6 @@ def run():
         if post['is_video']:
             with open('tmp_video_post', 'w') as f:
                 f.write(str(post))
-        with open('tmp_post', 'w') as f:
-            f.write(str(post))
         album = to_album.get(post)
         try:
             album_sender.send_v2(channel, album)
