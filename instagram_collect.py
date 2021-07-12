@@ -38,7 +38,6 @@ def writeSettings(settings_file):
     web_api = MyClient(username=credential["user"], password=credential["pwd"], auto_patch=True, drop_incompat_keys=False)
     result = dict(web_api.settings)
     del result['rhx_gis']
-    print(result)
     pickle.dump(result, open(settings_file,"wb"))
 
 def readSettings(settings_file):
@@ -89,7 +88,9 @@ def run():
     try:
         user_feed_info = web_api.user_feed(str(page), count=10)
     except Exception as e:
-        print('instagram fetch failed for %s %s: %s' % (detail.get('name'), page, e))
+        message = 'instagram fetch failed for %s %s: %s' % (detail.get('name'), page, e)
+        print(message)
+        debug_group.send_message(message)
         return
     with open('tmp_user_feed_info', 'w') as f:
         f.write(str(user_feed_info))
