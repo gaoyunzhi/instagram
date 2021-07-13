@@ -64,6 +64,8 @@ def getSchedule():
         for page, detail in pages.items():
             schedules.append((fetchtime.get(page, 0), channel_id, page, detail))
     schedules.sort()
+    if time.time() - schedules[-1][0] < 30 * 60:
+        return
     _, channel_id, page, detail = schedules[0]
     fetchtime.update(page, int(time.time()))
     return tele.bot.get_chat(channel_id), page, detail
@@ -84,7 +86,11 @@ def getReferer(text):
 
 @log_on_fail(debug_group)
 def run():
-    channel, page, detail = getSchedule()
+    schedule = getSchedule()
+    if not schedule:
+        print('facebook skip, min_interval: 30 minutes')
+        return
+    channel, page, detail = schedule
     try:
         user_feed_info = web_api.user_feed(str(page), count=10)
     except Exception as e:
