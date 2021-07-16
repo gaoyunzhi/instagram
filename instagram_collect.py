@@ -59,13 +59,15 @@ existing = plain_db.loadKeyOnlyDB('existing')
 tele = Updater(credential['bot_token'], use_context=True)
 debug_group = tele.bot.get_chat(credential['debug_group'])
 
+GAP_HOUR = 1.5
+
 def getSchedule():
     schedules = []
     for channel_id, pages in setting.items():
         for page, detail in pages.items():
             schedules.append((fetchtime.get(page, 0), channel_id, page, detail))
     schedules.sort()
-    if time.time() - schedules[-1][0] < 2 * 60 * 60:
+    if time.time() - schedules[-1][0] < GAP_HOUR * 60 * 60:
         return
     _, channel_id, page, detail = schedules[0]
     fetchtime.update(page, int(time.time()))
@@ -93,7 +95,7 @@ def getReferer(text, detail):
 def run():
     schedule = getSchedule()
     if not schedule:
-        print('instagram skip, min_interval: 2 hours')
+        print('instagram skip, min_interval: %s hours' % GAP_HOUR)
         return
     channel, page, detail = schedule
     try:
