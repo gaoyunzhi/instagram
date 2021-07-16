@@ -65,7 +65,7 @@ def getSchedule():
         for page, detail in pages.items():
             schedules.append((fetchtime.get(page, 0), channel_id, page, detail))
     schedules.sort()
-    if time.time() - schedules[-1][0] < 30 * 60:
+    if time.time() - schedules[-1][0] < 5 * 60 * 60:
         return
     _, channel_id, page, detail = schedules[0]
     fetchtime.update(page, int(time.time()))
@@ -93,7 +93,7 @@ def getReferer(text, detail):
 def run():
     schedule = getSchedule()
     if not schedule:
-        print('facebook skip, min_interval: 30 minutes')
+        print('instagram skip, min_interval: 5 hours')
         return
     channel, page, detail = schedule
     try:
