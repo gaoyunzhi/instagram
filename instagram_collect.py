@@ -49,8 +49,8 @@ if not os.path.exists("settingObj"):
 
 cache_settings = readSettings("settingObj")
 # web_api = MyClient(settings=cache_settings, auto_patch=True, drop_incompat_keys=False)
-web_api = MyClient(username=credential["user"], password=credential["pwd"], 
-    settings=cache_settings, auto_patch=True, drop_incompat_keys=False)
+# web_api = MyClient(username=credential["user"], password=credential["pwd"], 
+#     settings=cache_settings, auto_patch=True, drop_incompat_keys=False)
 
 with open('db/setting') as f:
     setting = yaml.load(f, Loader=yaml.FullLoader)
@@ -98,6 +98,8 @@ def run():
         print('instagram skip, min_interval: %s hours' % GAP_HOUR)
         return
     channel, page, detail = schedule
+    web_api = MyClient(username=credential["user"], password=credential["pwd"], 
+        settings=cache_settings, auto_patch=True, drop_incompat_keys=False)
     try:
         user_feed_info = web_api.user_feed(str(page), count=10)
     except Exception as e:
