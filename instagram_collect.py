@@ -59,7 +59,7 @@ existing = plain_db.loadKeyOnlyDB('existing')
 tele = Updater(credential['bot_token'], use_context=True)
 debug_group = tele.bot.get_chat(credential['debug_group'])
 
-GAP_HOUR = 1.5
+GAP_HOUR = 2
 
 def getSchedule():
     schedules = []
