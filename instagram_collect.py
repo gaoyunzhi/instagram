@@ -113,6 +113,7 @@ def run():
         return
     with open('tmp_user_feed_info', 'w') as f:
         f.write(str(user_feed_info))
+    latest_create_at = 0
     for post in user_feed_info:
         with open('tmp_post', 'w') as f:
             f.write(str(post))
@@ -120,6 +121,7 @@ def run():
         url = post['link']
         if not detail.get('no_refer'):
             getReferer((post.get('caption') or {}).get('text', ''), url)
+        latest_create_at = max(post['created_time'], latest_create_at)
         if existing.contain(url):
             continue
         if post['likes']['count'] < detail.get('likes', 100):
@@ -136,6 +138,7 @@ def run():
             print('instagram sending fail', url, e)
             continue
         existing.add(url)
+    print(latest_create_at)
         
 if __name__ == '__main__':
     run()
