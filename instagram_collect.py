@@ -138,10 +138,11 @@ def run():
             print('instagram sending fail', url, e)
             continue
         existing.add(url)
-    if time.time() - latest_create_at > 60 * 24 * 60 * 60:
-        stale.add(page)
-    else:
-        stale.remove(page)
+    if latest_create_at != 0:
+        if time.time() - latest_create_at > 60 * 24 * 60 * 60:
+            stale.add(page)
+        else:
+            stale.remove(page)
         
 if __name__ == '__main__':
     run()
