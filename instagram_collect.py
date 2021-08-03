@@ -121,7 +121,7 @@ def run():
         url = post['link']
         if not detail.get('no_refer'):
             getReferer((post.get('caption') or {}).get('text', ''), url)
-        latest_create_at = max(post['created_time'], latest_create_at)
+        latest_create_at = max(int(post['created_time']), latest_create_at)
         if existing.contain(url):
             continue
         if post['likes']['count'] < detail.get('likes', 100):
@@ -138,7 +138,10 @@ def run():
             print('instagram sending fail', url, e)
             continue
         existing.add(url)
-    print(latest_create_at)
+    if time.time() - latest_create_at > 60 * 24 * 60 * 60:
+        stale.add(page)
+    else:
+        stale.remove(page)
         
 if __name__ == '__main__':
     run()
