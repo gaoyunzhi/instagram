@@ -9,3 +9,4 @@ db/fetchtime
 settingObj*
 *backup*
 *db/referer*
+*db/stale*

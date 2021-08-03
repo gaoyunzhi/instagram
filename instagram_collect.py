@@ -19,6 +19,7 @@ from instagram_web_api import Client, ClientCompatPatch, ClientError, ClientLogi
 
 fetchtime = plain_db.load('fetchtime')
 referer = plain_db.loadKeyOnlyDB('referer')
+stale = plain_db.loadKeyOnlyDB('stale')
 referer_detail = plain_db.load('referer_detail', isIntValue = False)
 with open('credential') as f:
     credential = yaml.load(f, Loader=yaml.FullLoader)
@@ -63,8 +64,11 @@ GAP_HOUR = 2
 
 def getSchedule():
     schedules = []
+    include_stale = random.random() < 0.1
     for channel_id, pages in setting.items():
         for page, detail in pages.items():
+            if page in stale.items() and not include_stale:
+                continue
             schedules.append((fetchtime.get(page, 0), channel_id, page, detail))
     schedules.sort()
     if time.time() - schedules[-1][0] < GAP_HOUR * 60 * 60:
