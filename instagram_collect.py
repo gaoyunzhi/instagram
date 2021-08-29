@@ -59,8 +59,9 @@ with open('db/setting') as f:
 existing = plain_db.loadKeyOnlyDB('existing')
 tele = Updater(credential['bot_token'], use_context=True)
 debug_group = tele.bot.get_chat(credential['debug_group'])
+translate_channel = tele.bot.get_chat(credential['translate_channel'])
 
-GAP_HOUR = 1.7
+GAP_HOUR = 2
 
 def getSchedule():
     schedules = []
@@ -132,6 +133,7 @@ def run():
         album = to_album.get(post)
         try:
             album_sender.send_v2(channel, album)
+            album_sender.send_v2(translate_channel, album.toPlain())
         except Exception as e:
             with open('tmp_failed_post', 'w') as f:
                 f.write(str(post))
