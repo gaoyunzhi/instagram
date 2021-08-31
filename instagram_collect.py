@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import yaml
-from telegram_util import log_on_fail
+from telegram_util import log_on_fail, isCN
 from telegram.ext import Updater
 import plain_db
 import cached_url
@@ -131,9 +131,13 @@ def run():
             with open('tmp_video_post', 'w') as f:
                 f.write(str(post))
         album = to_album.get(post)
+        if isCN(album.cap_html_v2):
+            backup_channel = debug_group
+        else:
+            backup_channel = translate_channel
         try:
             album_sender.send_v2(channel, album)
-            album_sender.send_v2(translate_channel, album.toPlain())
+            album_sender.send_v2(backup_channel, album.toPlain())
         except Exception as e:
             with open('tmp_failed_post', 'w') as f:
                 f.write(str(post))
