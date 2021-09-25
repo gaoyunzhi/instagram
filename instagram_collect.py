@@ -133,11 +133,14 @@ def run():
         album = to_album.get(post)
         if isCN(album.cap_html_v2):
             backup_channel = debug_group
-        else:
+        elif channel.id == -1001216837149:
             backup_channel = translate_channel
+        else:
+            backup_channel = None
         try:
             album_sender.send_v2(channel, album)
-            album_sender.send_v2(backup_channel, album.toPlain())
+            if backup_channel:
+                album_sender.send_v2(backup_channel, album.toPlain())
         except Exception as e:
             with open('tmp_failed_post', 'w') as f:
                 f.write(str(post))
