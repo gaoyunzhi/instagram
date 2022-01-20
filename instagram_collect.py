@@ -65,7 +65,7 @@ GAP_HOUR = 1.5
 
 def getSchedule():
     schedules = []
-    include_stale = random.random() < 0.1
+    include_stale = random.random() < 0.05
     for channel_id, pages in setting.items():
         for page, detail in pages.items():
             if page in stale.items() and not include_stale:
