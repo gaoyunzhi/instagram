@@ -61,7 +61,7 @@ tele = Updater(credential['bot_token'], use_context=True)
 debug_group = tele.bot.get_chat(credential['debug_group'])
 translate_channel = tele.bot.get_chat(credential['translate_channel'])
 
-GAP_HOUR = 2
+GAP_HOUR = 2.5
 
 def getSchedule():
     schedules = []
