@@ -120,8 +120,8 @@ def run():
             f.write(str(post))
         post = post['node']
         url = post['link']
-        if not detail.get('no_refer'):
-            getReferer((post.get('caption') or {}).get('text', ''), url)
+        # if not detail.get('no_refer'):
+        #     getReferer((post.get('caption') or {}).get('text', ''), url)
         latest_create_at = max(int(post['created_time']), latest_create_at)
         if existing.contain(url):
             continue
