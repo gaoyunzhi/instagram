@@ -66,9 +66,12 @@ GAP_HOUR = 2.5
 def getSchedule():
     schedules = []
     include_stale = random.random() < 0.05
+    priority_only = random.random() > 0.8
     for channel_id, pages in setting.items():
         for page, detail in pages.items():
             if page in stale.items() and not include_stale:
+                continue
+            if priority_only and not detail.get('priority'):
                 continue
             schedules.append((fetchtime.get(page, 0), channel_id, page, detail))
     schedules.sort()
